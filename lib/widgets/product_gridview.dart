@@ -3,13 +3,14 @@ import 'package:flutter_complete_guide/providers/products.dart';
 import 'package:flutter_complete_guide/widgets/product_item.dart';
 import 'package:provider/provider.dart';
 
-import '../models/product.dart';
-
 class ProductGridView extends StatelessWidget {
+  final bool showFavorites;
+  ProductGridView(this.showFavorites);
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    final loadedProducts = productsData.items;
+    final loadedProducts =
+        showFavorites ? productsData.favoriteList : productsData.items;
     return GridView.builder(
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -19,7 +20,8 @@ class ProductGridView extends StatelessWidget {
         maxCrossAxisExtent: 300,
       ),
       itemBuilder: (context, index) {
-        return ProductItem(loadedProducts[index]);
+        return ChangeNotifierProvider.value(
+            value: loadedProducts[index], child: ProductItem());
       },
       itemCount: loadedProducts.length,
     );
