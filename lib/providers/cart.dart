@@ -44,4 +44,17 @@ class Cart with ChangeNotifier {
   int get getCount {
     return _items.length;
   }
+
+  double get totalAmount {
+    double total = 0.0;
+    _items.forEach((key, value) {
+      total += (value.price * value.quantity);
+    });
+    return total;
+  }
+
+  void deleteCartItem(String productId) {
+    _items.remove(productId);
+    notifyListeners();
+  }
 }
