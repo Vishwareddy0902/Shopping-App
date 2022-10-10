@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/cart.dart' show Cart;
+import 'package:flutter_complete_guide/providers/orders.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/cart_item.dart';
@@ -46,7 +47,11 @@ class CartScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.red,
                         )),
-                    onPressed: () {},
+                    onPressed: () {
+                      Provider.of<Order>(context, listen: false).addOrder(
+                          cart.totalAmount, cart.items.values.toList());
+                      cart.clear();
+                    },
                   )
                 ],
               ),
