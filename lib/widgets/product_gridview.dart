@@ -15,7 +15,7 @@ class ProductGridView extends StatelessWidget {
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         childAspectRatio: 3 / 2,
-        crossAxisSpacing: 15,
+        crossAxisSpacing: 5,
         mainAxisSpacing: 20,
         maxCrossAxisExtent: 300,
       ),

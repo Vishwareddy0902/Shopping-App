@@ -21,7 +21,7 @@ class _OrderTileState extends State<OrderTile> {
         children: [
           ListTile(
             title: Text(
-              '\$${widget.orderItem.totalAmount.toStringAsFixed(2)}',
+              '₹${widget.orderItem.totalAmount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
               style: TextStyle(fontSize: 20),
             ),
             subtitle: Text(DateFormat('dd/MM/yyyy hh:mm')
@@ -50,7 +50,7 @@ class _OrderTileState extends State<OrderTile> {
                                   Text(prod.title),
                                   Spacer(),
                                   Text(
-                                      '${prod.quantity} X \$${prod.price.toStringAsFixed(2)}'),
+                                      '${prod.quantity} X ₹${prod.price.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'),
                                 ],
                               ),
                               Divider(),

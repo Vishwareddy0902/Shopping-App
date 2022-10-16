@@ -4,11 +4,13 @@ class CartItem {
   final String id;
   final String title;
   final double price;
+  final String imageUrl;
   final int quantity;
   CartItem({
     @required this.id,
     @required this.title,
     @required this.price,
+    @required this.imageUrl,
     @required this.quantity,
   });
 }
@@ -20,7 +22,7 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
-  void addItem(String productId, String title, double price) {
+  void addItem(String productId, String title, double price, String imageUrl) {
     if (_items.containsKey(productId)) {
       _items.update(
           productId,
@@ -28,6 +30,7 @@ class Cart with ChangeNotifier {
               id: existingCartItem.id,
               title: existingCartItem.title,
               price: existingCartItem.price,
+              imageUrl: existingCartItem.imageUrl,
               quantity: existingCartItem.quantity + 1));
     } else {
       _items.putIfAbsent(
@@ -36,6 +39,7 @@ class Cart with ChangeNotifier {
               id: DateTime.now().toString(),
               title: title,
               price: price,
+              imageUrl: imageUrl,
               quantity: 1));
     }
     notifyListeners();
@@ -55,6 +59,25 @@ class Cart with ChangeNotifier {
 
   void deleteCartItem(String productId) {
     _items.remove(productId);
+    notifyListeners();
+  }
+
+  void deleteSingleProduct(String productId) {
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    if (_items[productId].quantity > 1) {
+      _items.update(
+          productId,
+          (existingProd) => CartItem(
+              id: existingProd.id,
+              title: existingProd.title,
+              price: existingProd.price,
+              imageUrl: existingProd.imageUrl,
+              quantity: existingProd.quantity - 1));
+    } else {
+      _items.remove(productId);
+    }
     notifyListeners();
   }
 

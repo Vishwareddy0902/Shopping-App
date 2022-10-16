@@ -31,7 +31,7 @@ class CartScreen extends StatelessWidget {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${cart.totalAmount.toStringAsFixed(2)}',
+                      '₹${cart.totalAmount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -67,6 +67,7 @@ class CartScreen extends StatelessWidget {
                 cart.items.keys.toList()[index],
                 cart.items.values.toList()[index].price,
                 cart.items.values.toList()[index].title,
+                cart.items.values.toList()[index].imageUrl,
                 cart.items.values.toList()[index].quantity)),
             itemCount: cart.getCount,
           ))

@@ -22,7 +22,7 @@ class ProductItem extends StatelessWidget {
             },
             child: Image.network(
               _product.imageUrl,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
           footer: GridTileBar(
@@ -36,10 +36,27 @@ class ProductItem extends StatelessWidget {
               ),
               color: Theme.of(context).colorScheme.secondary,
             ),
-            title: Text(_product.title),
+            title: Text(
+              _product.title,
+              style: TextStyle(fontSize: 10),
+              maxLines: 2,
+              textAlign: TextAlign.center,
+            ),
             trailing: IconButton(
               onPressed: () {
-                _cart.addItem(_product.id, _product.title, _product.price);
+                _cart.addItem(_product.id, _product.title, _product.price,
+                    _product.imageUrl);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('${_product.title} added to Cart'),
+                  duration: Duration(seconds: 2),
+                  //backgroundColor: Colors.blue,
+                  action: SnackBarAction(
+                      label: 'UNDO',
+                      onPressed: () {
+                        _cart.deleteSingleProduct(_product.id);
+                      }),
+                ));
               },
               icon: Icon(Icons.shopping_cart),
               color: Theme.of(context).colorScheme.secondary,

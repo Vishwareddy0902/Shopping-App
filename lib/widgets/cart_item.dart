@@ -8,8 +8,10 @@ class CartItem extends StatelessWidget {
   final String productId;
   final double price;
   final String title;
+  final String imageUrl;
   final int quantity;
-  CartItem(this.id, this.productId, this.price, this.title, this.quantity);
+  CartItem(this.id, this.productId, this.price, this.title, this.imageUrl,
+      this.quantity);
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,22 @@ class CartItem extends StatelessWidget {
         padding: EdgeInsets.only(right: 20),
       ),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) {
+        return showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('Are you sure?'),
+                  content: Text('Do You want to remove the item from the cart'),
+                  actions: [
+                    TextButton(
+                        onPressed: (() => Navigator.of(context).pop(false)),
+                        child: Text('No')),
+                    TextButton(
+                        onPressed: (() => Navigator.of(context).pop(true)),
+                        child: Text('Yes')),
+                  ],
+                ));
+      },
       onDismissed: (direction) {
         Provider.of<Cart>(context, listen: false).deleteCartItem(productId);
       },
@@ -36,21 +54,13 @@ class CartItem extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 //minRadius: 0,
-                backgroundColor: Colors.blue,
-                child: FittedBox(
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      '\$${price.toStringAsFixed(2)}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
+                backgroundImage: NetworkImage(imageUrl),
               ),
               title: Text(title),
-              subtitle:
-                  Text('Total:-\$${(price * quantity).toStringAsFixed(2)}'),
-              trailing: Text('$quantity x'),
+              subtitle: Text(
+                  'Total:-₹${(price * quantity).toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'),
+              trailing: Text(
+                  '$quantity x ₹${price.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'),
             )),
       ),
     );

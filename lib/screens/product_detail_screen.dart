@@ -20,31 +20,34 @@ class ProductDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: 300,
+              height: 500,
               width: double.infinity,
               child: Image.network(
                 selectedProduct.imageUrl,
-                fit: BoxFit.fill,
+                fit: BoxFit.contain,
               ),
             ),
             SizedBox(
               height: 20,
             ),
             Text(
-              '\$${selectedProduct.price}',
+              '₹${selectedProduct.price.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
               style: TextStyle(color: Colors.grey, fontSize: 30),
             ),
             SizedBox(
               height: 10,
             ),
-            Container(
-                padding: EdgeInsets.all(5),
-                width: double.infinity,
-                child: Text(
-                  selectedProduct.description,
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                ))
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                  padding: EdgeInsets.all(5),
+                  width: double.infinity,
+                  child: Text(
+                    selectedProduct.description,
+                    textAlign: TextAlign.left,
+                    softWrap: true,
+                  )),
+            )
           ],
         ),
       ),
