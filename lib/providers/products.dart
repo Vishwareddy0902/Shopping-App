@@ -95,11 +95,32 @@ class Products with ChangeNotifier {
   }
 
   void addNewItem(Product product) {
-    _items.add(product);
+    Product newProduct = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl);
+    _items.add(newProduct);
     notifyListeners();
   }
 
   Product findById(String Id) {
     return _items.firstWhere((prod) => prod.id == Id);
+  }
+
+  void deleteProduct(String Id) {
+    _items.removeWhere((product) => product.id == Id);
+    notifyListeners();
+  }
+
+  void updateProduct(Product product) {
+    final index = _items.indexWhere((element) => element.id == product.id);
+    if (index >= 0) {
+      _items[index] = product;
+      notifyListeners();
+    } else {
+      print('....');
+    }
   }
 }
