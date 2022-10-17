@@ -28,7 +28,17 @@ class ProductItem extends StatelessWidget {
           footer: GridTileBar(
             backgroundColor: Colors.black54,
             leading: IconButton(
-              onPressed: () => _product.toggleFavourite(),
+              onPressed: () => _product.toggleFavourite().catchError((error) {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    'Something went wrong',
+                    textAlign: TextAlign.center,
+                  ),
+                  duration: Duration(seconds: 2),
+                  //backgroundColor: Colors.blue,
+                ));
+              }),
               icon: Consumer<Product>(
                 builder: (context, value, child) => Icon(_product.isFavourite
                     ? Icons.favorite

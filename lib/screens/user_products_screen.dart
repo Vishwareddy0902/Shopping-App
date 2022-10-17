@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_complete_guide/providers/products.dart';
 import 'package:flutter_complete_guide/screens/edit_product_screen.dart';
 import 'package:flutter_complete_guide/widgets/app_drawer.dart';
@@ -14,6 +11,12 @@ class UserProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _refreshScreen() {
+      return Provider.of<Products>(context, listen: false)
+          .fetchAndSetData()
+          .then((value) {});
+    }
+
     final products = Provider.of<Products>(context);
     return Scaffold(
         appBar: AppBar(
@@ -27,14 +30,17 @@ class UserProductScreen extends StatelessWidget {
           ],
         ),
         drawer: AppDrawer(),
-        body: Padding(
-          padding: EdgeInsets.all(1),
-          child: Expanded(
-              child: ListView.builder(
-            itemBuilder: (context, index) =>
-                UserProductItem(products.items[index]),
-            itemCount: products.items.length,
-          )),
+        body: RefreshIndicator(
+          onRefresh: () => _refreshScreen(),
+          child: Padding(
+            padding: EdgeInsets.all(1),
+            child: Expanded(
+                child: ListView.builder(
+              itemBuilder: (context, index) =>
+                  UserProductItem(products.items[index]),
+              itemCount: products.items.length,
+            )),
+          ),
         ));
   }
 }

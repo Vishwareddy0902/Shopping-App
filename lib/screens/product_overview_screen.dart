@@ -3,6 +3,7 @@ import 'package:flutter_complete_guide/providers/cart.dart';
 import 'package:flutter_complete_guide/screens/cart_screen.dart';
 import 'package:flutter_complete_guide/widgets/badge.dart';
 import 'package:provider/provider.dart';
+import '../providers/products.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/product_gridview.dart';
 
@@ -18,6 +19,34 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showFavorites = false;
+  bool _init = true;
+  bool _isLoading = false;
+  Future<void> _refreshScreen() {
+    return Provider.of<Products>(context, listen: false)
+        .fetchAndSetData()
+        .then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_init) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetData().then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _init = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +90,13 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ],
         ),
         drawer: AppDrawer(),
-        body: ProductGridView(_showFavorites));
+        body: RefreshIndicator(
+          onRefresh: () => _refreshScreen(),
+          child: (_isLoading)
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ProductGridView(_showFavorites),
+        ));
   }
 }

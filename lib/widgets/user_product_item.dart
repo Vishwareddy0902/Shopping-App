@@ -42,7 +42,17 @@ class UserProductItem extends StatelessWidget {
                     IconButton(
                         onPressed: () {
                           Provider.of<Products>(context, listen: false)
-                              .deleteProduct(_product.id);
+                              .deleteProduct(_product.id)
+                              .catchError((error) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                'Unable to Delete',
+                                textAlign: TextAlign.center,
+                              ),
+                              duration: Duration(seconds: 2),
+                            ));
+                          });
                         },
                         icon: Icon(
                           Icons.delete,
