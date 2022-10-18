@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({Key key}) : super(key: key);
   static final String routeName = 'CartScreen';
 
   @override
@@ -42,19 +41,7 @@ class CartScreen extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  TextButton(
-                    child: Text('ORDER NOW',
-                        style: TextStyle(
-                          color: Colors.red,
-                        )),
-                    onPressed: () {
-                      if (cart.totalAmount > 0) {
-                        Provider.of<Order>(context, listen: false).addOrder(
-                            cart.totalAmount, cart.items.values.toList());
-                        cart.clear();
-                      }
-                    },
-                  )
+                  OrderNowButton(cart: cart)
                 ],
               ),
             ),
@@ -75,6 +62,71 @@ class CartScreen extends StatelessWidget {
           ))
         ],
       ),
+    );
+  }
+}
+
+class OrderNowButton extends StatefulWidget {
+  OrderNowButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  State<OrderNowButton> createState() => _OrderNowButtonState();
+}
+
+class _OrderNowButtonState extends State<OrderNowButton> {
+  bool _isLoading = false;
+
+  bool noError = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: _isLoading
+          ? CircularProgressIndicator()
+          : Text('ORDER NOW',
+              style: TextStyle(
+                color: (widget.cart.totalAmount <= 0)
+                    ? Colors.black38
+                    : Colors.red,
+              )),
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () {
+              setState(() {
+                _isLoading = true;
+              });
+              Provider.of<Order>(context, listen: false)
+                  .addOrder(widget.cart.totalAmount,
+                      widget.cart.items.values.toList())
+                  .catchError((error) {
+                noError = false;
+                return showDialog<Null>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text('ERROR!'),
+                          icon: Icon(Icons.error),
+                          iconColor: Theme.of(context).errorColor,
+                          content: Text('Something went wrong'),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Ok'))
+                          ],
+                        ));
+              }).then((value) {
+                setState(() {
+                  _isLoading = false;
+                });
+                if (noError) widget.cart.clear();
+              });
+            },
     );
   }
 }
