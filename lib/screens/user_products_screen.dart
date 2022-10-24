@@ -13,11 +13,11 @@ class UserProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> _refreshScreen() {
       return Provider.of<Products>(context, listen: false)
-          .fetchAndSetData()
+          .fetchAndSetData(fetchUserProducts: true)
           .then((value) {});
     }
 
-    final products = Provider.of<Products>(context);
+    //final products = Provider.of<Products>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('Your Products'),
@@ -30,17 +30,25 @@ class UserProductScreen extends StatelessWidget {
           ],
         ),
         drawer: AppDrawer(),
-        body: RefreshIndicator(
-          onRefresh: () => _refreshScreen(),
-          child: Padding(
-            padding: EdgeInsets.all(1),
-            child: Expanded(
-                child: ListView.builder(
-              itemBuilder: (context, index) =>
-                  UserProductItem(products.items[index]),
-              itemCount: products.items.length,
-            )),
-          ),
-        ));
+        body: FutureBuilder(
+            future: _refreshScreen(),
+            builder: (context, snapShot) =>
+                snapShot.connectionState == ConnectionState.waiting
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () => _refreshScreen(),
+                        child: Consumer<Products>(
+                          builder: ((context, products, _) => Padding(
+                                padding: EdgeInsets.all(1),
+                                child: Expanded(
+                                    child: ListView.builder(
+                                  itemBuilder: (context, index) =>
+                                      UserProductItem(products.items[index]),
+                                  itemCount: products.items.length,
+                                )),
+                              )),
+                        ))));
   }
 }

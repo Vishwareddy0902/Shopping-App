@@ -23,7 +23,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   bool _isLoading = false;
   Future<void> _refreshScreen() {
     return Provider.of<Products>(context, listen: false)
-        .fetchAndSetData()
+        .fetchAndSetData(fetchUserProducts: false)
         .then((value) {
       setState(() {
         _isLoading = false;

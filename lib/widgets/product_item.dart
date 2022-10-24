@@ -3,11 +3,13 @@ import 'package:flutter_complete_guide/providers/product.dart';
 import 'package:flutter_complete_guide/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth.dart';
 import '../providers/cart.dart';
 
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<Auth>(context, listen: false);
     final _product = Provider.of<Product>(context, listen: false);
     final _cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
@@ -28,7 +30,9 @@ class ProductItem extends StatelessWidget {
           footer: GridTileBar(
             backgroundColor: Colors.black54,
             leading: IconButton(
-              onPressed: () => _product.toggleFavourite().catchError((error) {
+              onPressed: () => _product
+                  .toggleFavourite(auth.token, auth.getUserId)
+                  .catchError((error) {
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(

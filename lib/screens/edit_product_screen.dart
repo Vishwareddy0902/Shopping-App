@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/product.dart';
 import 'package:provider/provider.dart';
@@ -300,6 +298,5 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       ],
                     )),
               ));
-    ;
   }
 }
